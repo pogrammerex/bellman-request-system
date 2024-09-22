@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finished Requests</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <style>
+        body {
+            background-color: #1c1c1c;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #333333;
+        }
+        .copyright {
+            margin-top: 20px;
+            color: #888888;
+        }
+    </style>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('update_requests', function() {
+            location.reload();
+        });
+
+        function confirmClear() {
+            // Show confirmation prompt
+            let confirmAction = confirm("Are you sure you want to delete all the rooms?");
+            if (confirmAction) {
+                document.getElementById("clear-form").submit();  // Submit the form if confirmed
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Finished Requests</h1>
+    
+    <button class="clear-button" onclick="confirmClear()">Clear Finished Requests</button>
+    
+    <form id="clear-form" action="/clear-finished" method="POST" style="display: none;">
+    </form>
+
+    <div class="container">
+        <table>
+            <tr>
+                <th>Room Number</th>
+                <th>Time Finished</th>
+            </tr>
+            {% for req in finished_requests %}
+            <tr>
+                <td>Room {{ req.room }}</td>
+                <td>{{ req.time_finished }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">No finished requests at the moment.</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/">Go Back</a>
+    </div>
+
+     <!-- Copyright Notice -->
+     <div class="copyright">
+      &copy; 2024 Meshal Bahaddad (Rex Tenison)
+</body>
+</html>
