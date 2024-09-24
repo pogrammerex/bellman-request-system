@@ -58,6 +58,7 @@
         function playNotificationSound() {
             var audio = document.getElementById('notification-sound');
         if (audio) {
+            audio.muted = false;
             console.log("Playing sound for new request...");
             audio.play().catch(function(error) {
                 console.log("Audio playback failed:", error);
@@ -121,7 +122,7 @@
     </div>
 
     <!-- Notification Sound -->
-    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto">autoplay mute</audio>
+    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto" muted></audio>
     <button onclick="playNotificationSound()">Test Sound</button>
     <!-- Copyright Notice -->
     <div class="copyright">
