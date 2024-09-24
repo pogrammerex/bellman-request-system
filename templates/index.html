@@ -53,8 +53,19 @@
     </style>
     <script type="text/javascript">
         var socket = io();
+
+        // Function to play the notification sound
+        function playNotificationSound() {
+            var audio = document.getElementById('notification-sound');
+            audio.play();
+        }
+
         // Listen for updates from the server
         socket.on('update_requests', function(data) {
+
+            // Play sound when a new request is received
+            playNotificationSound();
+
             // Reload the page when updates happen
             location.reload();
         });
@@ -100,6 +111,9 @@
         </table>
         <a href="/finished">View Finished Requests</a>
     </div>
+
+    <!-- Notification Sound -->
+    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto"></audio>
 
     <!-- Copyright Notice -->
     <div class="copyright">
