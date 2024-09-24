@@ -6,6 +6,12 @@ import os
 
 app = Flask(__name__)
 
+# Configure PostgreSQL using Heroku's environment variable
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
 # Configure SQLite Database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bellman_requests.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
