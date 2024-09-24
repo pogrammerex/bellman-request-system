@@ -57,7 +57,14 @@
         // Function to play the notification sound
         function playNotificationSound() {
             var audio = document.getElementById('notification-sound');
-            audio.play();
+        if (audio) {
+            console.log("Playing sound for new request...");
+            audio.play().catch(function(error) {
+                console.log("Audio playback failed:", error);
+            });
+        } else {
+            console.log("Audio element not found!");
+        }
         }
 
         // Listen for updates from the server
