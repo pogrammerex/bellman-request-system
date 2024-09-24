@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bellman Request System</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script> <!-- Keep only one SocketIO script -->
     <style>
         body {
             background-color: #1c1c1c;
@@ -51,10 +51,10 @@
             color: red;
         }
     </style>
-    <script>
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
+    <script type="text/javascript">
+        var socket = io();
         // Listen for updates from the server
-        socket.on('update_requests', function() {
+        socket.on('update_requests', function(data) {
             // Reload the page when updates happen
             location.reload();
         });
@@ -107,4 +107,3 @@
     </div>
 </body>
 </html>
-
