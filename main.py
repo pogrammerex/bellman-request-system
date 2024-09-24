@@ -82,4 +82,6 @@ def handle_connect():
     print("Client connected")
 
 if __name__ == "__main__":
+    import eventlet
+    eventlet.monkey_patch()  # Ensures that the async features of eventlet are used
     socketio.run(app, debug=False, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
