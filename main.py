@@ -6,6 +6,11 @@ import os
 
 app = Flask(__name__)
 
+# Fix for Heroku's postgres:// to postgresql://
+uri = os.environ.get('DATABASE_URL')  # or other relevant config var
+if uri and uri.startswith('postgres://'):
+    uri = uri.replace('postgres://', 'postgresql://', 1)
+
 # Configure PostgreSQL using Heroku's environment variable
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ubsqbqsv82j9pt:pb8f90b81768c42b952fb9429c3823f416ddae9530e62747d34ef0b863ad7b267@ccpa7stkruda3o.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d593p3hh6ahdua'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
