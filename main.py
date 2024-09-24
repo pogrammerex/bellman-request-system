@@ -7,19 +7,14 @@ import os
 app = Flask(__name__)
 
 # Fix for Heroku's postgres:// to postgresql://
-uri = os.environ.get('DATABASE_URL')  # or other relevant config var
+uri = os.environ.get('DATABASE_URL')  # Get the database URL from Heroku
 if uri and uri.startswith('postgres://'):
     uri = uri.replace('postgres://', 'postgresql://', 1)
 
-# Configure PostgreSQL using Heroku's environment variable
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ubsqbqsv82j9pt:pb8f90b81768c42b952fb9429c3823f416ddae9530e62747d34ef0b863ad7b267@ccpa7stkruda3o.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d593p3hh6ahdua'
+# Configure PostgreSQL using Heroku's environment variable or fallback for local testing
+app.config['SQLALCHEMY_DATABASE_URI'] = uri or 'sqlite:///bellman_requests.db'  # Fallback to SQLite for local testing
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-
-# Configure SQLite Database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bellman_requests.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 socketio = SocketIO(app)
 
@@ -33,10 +28,6 @@ class FinishedRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     room = db.Column(db.String(10), nullable=False)
     time_finished = db.Column(db.String(50), nullable=False)
-
-# Uncomment this the first time to create the tables
-#with app.app_context():
-#    db.create_all()
 
 @app.route('/')
 def index():
@@ -90,8 +81,5 @@ def clear_finished():
 def handle_connect():
     print("Client connected")
 
-
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
-
+    socketio.run(app, debug=False, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
