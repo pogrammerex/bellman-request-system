@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
@@ -79,6 +80,7 @@ def handle_connect():
     print("Client connected")
 
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+if __name__ == "__main__":
+    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+
 
