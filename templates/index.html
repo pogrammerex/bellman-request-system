@@ -119,8 +119,11 @@
             // Play sound when a new request is received
             playNotificationSound();
 
-            addRequestToTable(data.room_number);
-        });
+            setTimeout(function() {
+            playNotificationSound()
+            location.reload();  // Reload the page after 2 seconds
+        }, 2000);  // 2000 milliseconds = 2 seconds
+    });
     // Enable sound playback after any user interaction
         window.onload = function() {
             playNotificationSound();
