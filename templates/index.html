@@ -57,46 +57,15 @@
         // Function to play the notification sound
         function playNotificationSound() {
             var audio = document.getElementById('notification-sound');
-            if (audio && soundEnabled) {
-                audio.currentTime = 0;  // Reset the audio to start from the beginning
-                console.log("Playing sound for new request...");
-                audio.play().catch(function(error) {
+        if (audio) {
+            audio.muted = false;
+            console.log("Playing sound for new request...");
+            audio.play().catch(function(error) {
                 console.log("Audio playback failed:", error);
-                });
-            } else if (!soundEnabled) {
-                console.log("Sound is not enabled yet.");
-            } else {
-                console.log("Audio element not found!");
-            }
+            });
+        } else {
+            console.log("Audio element not found!");
         }
-
-// Function to enable sound via user interaction
-        function playNotificationSound() {
-            var audio = document.getElementById('notification-sound');
-            if (audio && soundEnabled) {
-                audio.currentTime = 0;  // Reset the audio to start from the beginning
-                console.log("Playing sound for new request...");
-                audio.play().catch(function(error) {
-                console.log("Audio playback failed:", error);
-                });
-            } else if (!soundEnabled) {
-                console.log("Sound is not enabled yet.");
-            } else {
-                console.log("Audio element not found!");
-            }
-        }
-
-    // Function to enable sound via user interaction
-        function enableSound() {
-            var audio = document.getElementById('notification-sound');
-            if (audio) {
-                audio.play().then(() => {
-                soundEnabled = true;  // Enable sound for the session
-                console.log("Sound is now enabled for the session.");
-                }).catch(error => {
-                console.log("Failed to enable sound:", error);
-                });
-            }
         }
 
         // Listen for updates from the server
@@ -110,8 +79,16 @@
         }, 2000);  // 2000 milliseconds = 2 seconds
     });
     // Enable sound playback after any user interaction
-    // Add event listener to enable sound on user interaction
-    document.addEventListener('click', enableSound);
+    document.addEventListener('click', function() {
+        var audio = document.getElementById('notification-sound');
+        if (audio) {
+            audio.play().then(() => {
+                console.log("Autoplay enabled by user interaction");
+                }).catch(error => {
+                console.log("Autoplay not allowed without user interaction");
+            });
+        } 
+    });
     </script>
 </head>
 <body>
