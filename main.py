@@ -43,6 +43,7 @@ def add_request():
         db.session.commit()
         # Notify clients about the new request
         socketio.emit('update_requests', {'room_number': room_number})  # Pass room_number as data
+        socketio.emit('play sound')
     return redirect(url_for('index'))
 
 @app.route('/update/<int:request_id>/<status>', methods=['POST'])
