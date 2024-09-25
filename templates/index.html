@@ -93,7 +93,7 @@
         <a href="/finished">View Finished Requests</a>
     </div>
 
-    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto"Autoplay></audio>
+    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto"Autoplay muted></audio>
 
     <script type="text/javascript">
         var socket = io();
@@ -103,6 +103,7 @@
             var audio = document.getElementById('notification-sound');
         if (audio) {
             audio.muted = false;
+            audio.currentTime = 0;
             console.log("Playing sound for new request...");
             audio.play().catch(function(error) {
                 console.log("Audio playback failed:", error);
@@ -118,10 +119,8 @@
             // Play sound when a new request is received
             playNotificationSound();
 
-            setTimeout(function() {
-            location.reload();  // Reload the page after 2 seconds
-        }, 2000);  // 2000 milliseconds = 2 seconds
-    });
+            addRequestToTable(data.room_number);
+        });
     // Enable sound playback after any user interaction
         window.onload = function() {
             playNotificationSound();
