@@ -123,7 +123,7 @@
         }, 2000);  // 2000 milliseconds = 2 seconds
     });
     // Enable sound playback after any user interaction
-    document.addEventListener('click', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         var audio = document.getElementById('notification-sound');
         if (audio) {
             audio.play().then(() => {
