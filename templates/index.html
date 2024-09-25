@@ -4,98 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bellman Request System</title>
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script> <!-- Include SocketIO library -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script> <!-- Keep only one SocketIO script -->
     <style>
-        /* Your styling here */
+        body {
+            background-color: #1c1c1c;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #333333;
+        }
+        .pending {
+            color: green;
+        }
+        .in-progress {
+            color: orange;
+        }
+        .finished {
+            color: red;
+        }
+        .center {
+            margin: 0 auto;
+        }
+        .copyright {
+            margin-top: 20px;
+            color: #888888;
+        }
+        /* Style the "In Progress" column header in red */
+        .progress-header {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <h1>Bellman Requests</h1>
+    <div class="container">
+        <form action="/add" method="POST">
+            <input type="text" name="room_number" placeholder="Enter Room Number" required>
+            <button type="submit">Add Request</button>
+        </form>
 
-    <!-- The table where requests will be added dynamically -->
-    <table id="requests-table">
-        <thead>
+        <table>
             <tr>
                 <th>Room Number</th>
-                <th>In Progress</th>
+                <th class="progress-header">In Progress</th>
                 <th>Finished</th>
             </tr>
-        </thead>
-        <tbody>
             {% for req in requests %}
-            <tr id="row-{{ req.id }}">
-                <td>{{ req.room }}</td>
+            <tr>
+                <td class="{% if req.status == 'Pending' %}pending{% elif req.status == 'In Progress' %}in-progress{% else %}finished{% endif %}">
+                    Room {{ req.room }}
+                </td>
                 <td>
                     <form action="/update/{{ req.id }}/in-progress" method="POST">
+                        <input type="hidden" name="status" value="in-progress">
                         <input type="checkbox" onclick="this.form.submit()" {% if req.status == 'In Progress' %}checked{% endif %}>
                     </form>
                 </td>
                 <td>
                     <form action="/finish/{{ req.id }}" method="POST">
+                        <input type="hidden" name="status" value="finished">
                         <input type="checkbox" onclick="this.form.submit()" {% if req.status == 'Finished' %}checked{% endif %}>
                     </form>
                 </td>
             </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">No requests at the moment.</td>
+            </tr>
             {% endfor %}
-        </tbody>
-    </table>
+        </table>
+        <a href="/finished">View Finished Requests</a>
+    </div>
 
-    <!-- Notification Sound -->
-    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto"></audio>
+    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto"Autoplay mute></audio>
 
     <script type="text/javascript">
-        var socket = io();  // Connect to SocketIO
-
+        var socket = io();
+        
         // Function to play the notification sound
         function playNotificationSound() {
             var audio = document.getElementById('notification-sound');
-            if (audio) {
-                audio.currentTime = 0;  // Reset the audio to start from the beginning
-                audio.play().catch(function(error) {
-                    console.log("Audio playback failed:", error);
-                });
-            } else {
-                console.log("Audio element not found!");
-            }
+        if (audio) {
+            audio.muted = false;
+            console.log("Playing sound for new request...");
+            audio.play().catch(function(error) {
+                console.log("Audio playback failed:", error);
+            });
+        } else {
+            console.log("Audio element not found!");
+        }
         }
 
-        // Function to dynamically add a row to the table for a new request
-        function addRequestToTable(room_number) {
-            var tbody = document.querySelector('#requests-table tbody');
-            var newRow = document.createElement('tr');
-
-            newRow.innerHTML = `
-                <td>Room ${room_number}</td>
-                <td>
-                    <form action="/update/in-progress" method="POST">
-                        <input type="checkbox" onclick="this.form.submit()">
-                    </form>
-                </td>
-                <td>
-                    <form action="/finish" method="POST">
-                        <input type="checkbox" onclick="this.form.submit()">
-                    </form>
-                </td>
-            `;
-
-            tbody.appendChild(newRow);
-        }
-
-        // Listen for the 'play sound' event from the server
-        socket.on('play sound', function() {
-            // Play the notification sound
-            playNotificationSound();
-        });
-
-        // Listen for updates from the server and dynamically add new requests to the table
+        // Listen for updates from the server
         socket.on('update_requests', function(data) {
-            console.log("New request for room:", data.room_number);
 
-            // Dynamically add the new request to the table without reloading
-            addRequestToTable(data.room_number);
-        });
+            // Play sound when a new request is received
+            playNotificationSound();
+
+            setTimeout(function() {
+            location.reload();  // Reload the page after 2 seconds
+        }, 2000);  // 2000 milliseconds = 2 seconds
+    });
+    // Enable sound playback after any user interaction
+    document.addEventListener('click', function() {
+        var audio = document.getElementById('notification-sound');
+        if (audio) {
+            audio.play().then(() => {
+                console.log("Autoplay enabled by user interaction");
+                }).catch(error => {
+                console.log("Autoplay not allowed without user interaction");
+            });
+        } 
+    });
     </script>
 
+    <button onclick="playNotificationSound()">Test Sound</button>
     <!-- Copyright Notice -->
     <div class="copyright">
         &copy; 2024 Meshal Bahaddad (Rex Tenison)
