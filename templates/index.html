@@ -54,6 +54,8 @@
     <script type="text/javascript">
         var socket = io();
 
+        <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto" muted></audio>
+        
         // Function to play the notification sound
         function playNotificationSound() {
             var audio = document.getElementById('notification-sound');
@@ -132,8 +134,6 @@
         <a href="/finished">View Finished Requests</a>
     </div>
 
-    <!-- Notification Sound -->
-    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto" muted></audio>
     <button onclick="playNotificationSound()">Test Sound</button>
     <!-- Copyright Notice -->
     <div class="copyright">
