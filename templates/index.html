@@ -105,14 +105,10 @@
             // Play sound when a new request is received
             playNotificationSound();
 
-            var newRow = document.createElement('tr');
-            newRow.innerHTML = `
-            <td>Room ${data.room_number}</td>
-            <td><input type="checkbox" /></td>
-            <td><input type="checkbox" /></td>
-        `;
-            document.querySelector('table tbody').appendChild(newRow);  // Assuming the table has <tbody>
-        });
+            setTimeout(function() {
+            location.reload();  // Reload the page after 2 seconds
+        }, 2000);  // 2000 milliseconds = 2 seconds
+    });
     // Enable sound playback after any user interaction
     // Add event listener to enable sound on user interaction
     document.addEventListener('click', enableSound);
