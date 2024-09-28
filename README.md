@@ -17,4 +17,4 @@ Technologies Used:
     HTML, CSS, JavaScript for the front-end
     Socket.IO for real-time communication
 
-This system is intended to improve communication and coordination in hotels, making the work of operators and bellmen more efficient, while providing better service to guests.
+This system is intended to improve communication and coordination in hotels, making the work of operators and bellmen more efficient, while providing better service to guests..
