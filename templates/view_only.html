@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <title>Bellman Requests - View Only</title>
+    <style>
+        body {
+            background-color: #1c1c1c;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #333333;
+        }
+        .pending {
+            color: green;
+        }
+        .in-progress {
+            color: orange;
+        }
+        .finished {
+            color: red;
+        }
+        .center {
+            margin: 0 auto;
+        }
+        .copyright {
+            margin-top: 20px;
+            color: #888888;
+        }
+        /* Style the "In Progress" column header in red */
+        .progress-header {
+            color: red;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Bellman Requests - View Only</h1>
+    <div class="container">
+        <table>
+            <tr>
+                <th>Room Number</th>
+                <th class="progress-header">In Progress</th>
+                <th>Finished</th>
+            </tr>
+            {% for req in requests %}
+            <tr>
+                <td class="{% if req.status == 'Pending' %}pending{% elif req.status == 'In Progress' %}in-progress{% else %}finished{% endif %}">
+                    Room {{ req.room }}
+                </td>
+                <td>
+                    <form action="/update/{{ req.id }}/in-progress" method="POST">
+                        <input type="hidden" name="status" value="in-progress">
+                        <input type="checkbox" onclick="this.form.submit()" {% if req.status == 'In Progress' %}checked{% endif %}>
+                    </form>
+                </td>
+                <td>
+                    <form action="/finish/{{ req.id }}" method="POST">
+                        <input type="hidden" name="status" value="finished">
+                        <input type="checkbox" onclick="this.form.submit()" {% if req.status == 'Finished' %}checked{% endif %}>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">No requests at the moment.</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/finished">View Finished Requests</a>
+    </div>
+
+    <audio id="notification-sound" src="{{ url_for('static', filename='notification.wav') }}" preload="auto"Autoplay muted></audio>
+
+    <script type="text/javascript">
+        var socket = io();
+        
+        // Function to play the notification sound
+        function playNotificationSound() {
+            var audio = document.getElementById('notification-sound');
+        if (audio) {
+            audio.muted = false;
+            audio.currentTime = 0;
+            console.log("Playing sound for new request...");
+            audio.play().catch(function(error) {
+                console.log("Audio playback failed:", error);
+            });
+        } else {
+            console.log("Audio element not found!");
+        }
+        }
+
+        // Listen for updates from the server
+        socket.on('update_requests', function(data) {
+
+            // Play sound when a new request is received
+            playNotificationSound();
+
+            setTimeout(function() {
+            playNotificationSound()
+            location.reload();  // Reload the page after 2 seconds
+        }, 2000);  // 2000 milliseconds = 2 seconds
+    });
+    // Enable sound playback after any user interaction
+        window.onload = function() {
+            playNotificationSound();
+        };
+    </script>
+
+    <!-- Copyright Notice -->
+    <div class="copyright">&copy; 2024 Meshal Bahaddad (Rex Tenison)</div>
+  </body>
+</html>
